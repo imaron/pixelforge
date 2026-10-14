@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="app-version" content="0.1.0">
+<title>PixelForge — the small engineers' print shop</title>
+<meta name="description" content="Kids design pixel prototypes. We 3D print them for real. Join Print Run 01.">
+<meta property="og:title" content="PixelForge — the small engineers' print shop">
+<meta property="og:description" content="Kids draw pixel prototypes on a real build grid. We 3D print them for real. Join Print Run 01.">
+<meta property="og:image" content="https://media.base44.com/images/public/69b1a4d80f845e110c847722/a11c269e2_generated_image.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root { --paper:#FAFBF8; --ink:#101014; --line:#101014; --lime:#C6F211; --dim:#6B6F76; --grid:rgba(16,16,20,.06); --ok:#0F6B47; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; }
+body { background:var(--paper); color:var(--ink); font-family:'Space Grotesk',sans-serif; overflow-x:hidden; -webkit-text-size-adjust:100%; }
+.mono { font-family:'IBM Plex Mono',monospace; }
+.disp { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.02em; }
+a { text-decoration:none; color:inherit; }
+input, button { font-family:inherit; -webkit-appearance:none; appearance:none; border-radius:0; }
+button { cursor:pointer; }
+.wrap { width:calc(100% - 24px); max-width:960px; margin:0 auto; }
+/* top bar */
+#topbar { border-bottom:2px solid var(--line); background:var(--paper); position:sticky; top:0; z-index:50; }
+#topbar .wrap { display:flex; align-items:center; justify-content:space-between; height:52px; }
+.logo { font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:17px; letter-spacing:.08em; }
+.logo b { background:var(--lime); padding:0 5px; margin-left:2px; }
+#topbar nav { display:flex; gap:18px; font-size:13px; }
+#topbar nav a { font-family:'IBM Plex Mono',monospace; font-weight:600; text-transform:uppercase; letter-spacing:.06em; }
+/* ticker */
+#ticker { border-bottom:2px solid var(--line); background:var(--ink); color:var(--lime); overflow:hidden; white-space:nowrap; }
+#ticker span { display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:12px; padding:7px 0; animation:tick 22s linear infinite; }
+@keyframes tick { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+/* hero */
+#hero { border-bottom:2px solid var(--line); background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px); background-size:28px 28px; }
+#hero .wrap { padding:56px 0 44px; }
+.kicker { font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:var(--dim); margin-bottom:14px; }
+.kicker i { font-style:normal; color:var(--ink); background:var(--lime); padding:1px 6px; margin-right:6px; }
+h1 { font-size:clamp(44px,11vw,96px); line-height:.95; text-transform:uppercase; letter-spacing:-.03em; margin-bottom:18px; }
+h1 .ol { -webkit-text-stroke:2px var(--ink); color:transparent; }
+.sub { font-size:17px; line-height:1.5; max-width:560px; color:var(--ink); margin-bottom:26px; }
+.cta { display:inline-block; background:var(--ink); color:var(--lime); font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:16px; padding:16px 26px; min-height:52px; border:2px solid var(--ink); box-shadow:5px 5px 0 var(--lime); }
+.cta:active { transform:translate(2px,2px); box-shadow:3px 3px 0 var(--lime); }
+.herometa { margin-top:22px; font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--dim); }
+/* sections */
+section { border-bottom:2px solid var(--line); padding:44px 0; }
+.sechead { display:flex; align-items:baseline; gap:12px; margin-bottom:26px; }
+.sechead .no { font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600; background:var(--ink); color:var(--lime); padding:2px 8px; }
+.sechead h2 { font-size:clamp(28px,7vw,44px); text-transform:uppercase; letter-spacing:-.02em; }
+/* steps */
+.steps { display:flex; flex-direction:column; gap:0; }
+.step { border:2px solid var(--line); padding:18px; }
+.step + .step { border-top:none; }
+.step h3 { font-size:19px; margin-bottom:6px; }
+.step h3 i { font-style:normal; font-family:'IBM Plex Mono',monospace; font-size:13px; background:var(--lime); padding:1px 7px; margin-right:8px; vertical-align:2px; }
+.step p { font-size:15px; line-height:1.5; color:var(--dim); }
+.step p b { color:var(--ink); }
+/* forge */
+#forge .wrap { max-width:720px; }
+.forge-grid { display:flex; flex-direction:column; gap:16px; }
+.canvasbox { border:2px solid var(--line); background:#fff; padding:12px; }
+#grid { display:grid; grid-template-columns:repeat(8,1fr); gap:4px; touch-action:none; }
+#grid button { height:40px; min-height:40px; border:1px solid rgba(16,16,20,.25); background:#fff; padding:0; }
+#grid button.on { background:var(--fill,#C6F211); border-color:var(--ink); }
+#grid button.er { opacity:0; }
+.toolrow { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.tbtn { font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; border:2px solid var(--ink); background:#fff; color:var(--ink); padding:12px 16px; min-height:44px; }
+.tbtn.sel { background:var(--ink); color:var(--lime); }
+.swatches { display:flex; gap:10px; flex-wrap:wrap; }
+.sw { width:44px; height:44px; border:2px solid var(--ink); padding:0; }
+.sw.sel { outline:3px solid var(--ink); outline-offset:2px; }
+/* spec panel */
+#spec { border:2px solid var(--ink); background:var(--ink); color:#EDF1E4; font-family:'IBM Plex Mono',monospace; font-size:13px; }
+#spec .srow { display:flex; justify-content:space-between; padding:10px 14px; border-bottom:1px solid rgba(255,255,255,.15); }
+#spec .srow:last-child { border-bottom:none; }
+#spec .srow b { color:var(--lime); }
+#spec .serial { display:block; text-align:center; padding:12px; border-bottom:1px solid rgba(255,255,255,.15); letter-spacing:.15em; }
+/* stamp area */
+.stamprow { display:flex; flex-direction:column; gap:10px; }
+#bname { height:52px; border:2px solid var(--ink); background:#fff; padding:0 14px; font-size:16px; width:100%; }
+.stampbtns { display:flex; gap:10px; flex-wrap:wrap; }
+.stamp { font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px; text-transform:uppercase; padding:14px 18px; min-height:52px; border:2px solid var(--ink); }
+#stamp-go { background:var(--lime); color:var(--ink); flex:1; min-width:200px; box-shadow:4px 4px 0 var(--ink); }
+#stamp-go:active { transform:translate(2px,2px); box-shadow:2px 2px 0 var(--ink); }
+#stamp-share { background:#fff; color:var(--ink); }
+#forge-msg { font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600; color:var(--ok); min-height:22px; }
+/* manifest */
+#manifest { border:2px solid var(--ink); background:#fff; }
+.mrow { display:flex; justify-content:space-between; gap:10px; padding:12px 14px; border-bottom:1px solid rgba(16,16,20,.2); font-size:14px; align-items:center; }
+.mrow:last-child { border-bottom:none; }
+.mrow .mono { color:var(--dim); font-size:12px; }
+.mrow .px { width:34px; display:grid; grid-template-columns:repeat(4,1fr); gap:1px; }
+.mrow .px i { display:block; height:7px; border:1px solid rgba(16,16,20,.3); }
+.mrow .px i.on { background:var(--ink); border-color:var(--ink); }
+/* waiting list */
+#list .wrap { max-width:560px; }
+.wl { border:2px solid var(--ink); background:#fff; padding:20px; display:flex; flex-direction:column; gap:12px; }
+.wl label { font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; }
+.wl input { height:52px; border:2px solid var(--ink); padding:0 14px; font-size:16px; width:100%; background:var(--paper); }
+.wl button { font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px; text-transform:uppercase; background:var(--ink); color:var(--lime); border:2px solid var(--ink); padding:14px 18px; min-height:52px; }
+#wl-msg { font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600; }
+.err { color:#B3261E; }
+.wl-note { font-size:13px; color:var(--dim); line-height:1.5; }
+/* footer */
+footer { padding:28px 0 40px; font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--dim); }
+footer .wrap { display:flex; flex-direction:column; gap:4px; }
+@media (min-width:760px) {
+  .steps { flex-direction:row; }
+  .step { flex:1; border-top:2px solid var(--line); }
+  .step + .step { border-left:none; }
+  .forge-grid { display:grid; grid-template-columns:1fr 260px; }
+  #grid button { height:48px; }
+}
+</style>
+</head>
+<body>
+
+<header id="topbar">
+  <div class="wrap">
+    <a class="logo" href="#top">PIXEL<b>FORGE</b></a>
+    <nav>
+      <a href="#how">Spec</a>
+      <a href="#forge">Forge</a>
+      <a href="#list">Run 01</a>
+    </nav>
+  </div>
+</header>
+
+<div id="ticker"><span>PRINT RUN 01 NOW FORMING /// 64-VOXEL CANVAS /// 32 × 32 MM TILE /// SINGLE-FILAMENT PRINT /// DESIGNED BY KIDS, PRINTED FOR REAL /// PRINT RUN 01 NOW FORMING /// 64-VOXEL CANVAS /// 32 × 32 MM TILE /// SINGLE-FILAMENT PRINT /// DESIGNED BY KIDS, PRINTED FOR REAL /// </span></div>
+
+<section id="hero">
+  <div class="wrap">
+    <div class="kicker"><i>PX-01</i> A 3D print shop for small engineers</div>
+    <h1>Your kid is an<br><span class="ol">engineer.</span></h1>
+    <p class="sub">No catalog. No picking from a shelf. At PixelForge, kids draw a pixel prototype on a real build grid, and we 3D print the exact thing they made. One color. One tile. Their design, in their hands.</p>
+    <a class="cta" href="#forge">Open the forge &rarr;</a>
+    <div class="herometa mono">UNIT: TX-01 // STATUS: CALIBRATED // OPENER: OCT 2026</div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="sechead"><span class="no">01</span><h2>How it works</h2></div>
+    <div class="steps">
+      <div class="step"><h3><i>Draw</i>Design on the build grid</h3><p>An 8 × 8 canvas, one finger, one color. Kids tap out a picture: a rocket, a ghost, their initials, anything. <b>8 minutes of focus, not 8 seconds of scrolling.</b></p></div>
+      <div class="step"><h3><i>Print</i>We print the exact pixels</h3><p>Every filled cell becomes a raised voxel on a 32 × 32 mm tile, printed in solid single-filament plastic. <b>No smoothing, no editing. What they drew is what they get.</b></p></div>
+      <div class="step"><h3><i>Ship</i>It arrives with their name on it</h3><p>The tile ships with a spec sheet carrying their design's serial number. <b>A real object they engineered, not a toy they were sold.</b></p></div>
+    </div>
+  </div>
+</section>
+
+<section id="forge">
+  <div class="wrap">
+    <div class="sechead"><span class="no">02</span><h2>The forge</h2></div>
+    <div class="forge-grid">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="toolrow">
+          <button class="tbtn sel" id="tool-draw">Draw</button>
+          <button class="tbtn" id="tool-erase">Erase</button>
+          <button class="tbtn" id="btn-clear">Clear</button>
+        </div>
+        <div class="canvasbox">
+          <div id="grid" aria-label="8 by 8 pixel design canvas"></div>
+        </div>
+        <div class="toolrow">
+          <span class="mono" style="font-size:13px;font-weight:600;align-self:center">TEMPLATES:</span>
+          <button class="tbtn preset" data-p="rocket">Rocket</button>
+          <button class="tbtn preset" data-p="heart">Heart</button>
+          <button class="tbtn preset" data-p="ghost">Ghost</button>
+          <button class="tbtn preset" data-p="cat">Cat</button>
+        </div>
+        <div class="toolrow">
+          <span class="mono" style="font-size:13px;font-weight:600;align-self:center">FILAMENT:</span>
+          <div class="swatches" id="fil"></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div id="spec" aria-live="polite">
+          <span class="serial" id="serial">SERIAL: PX-0000</span>
+          <div class="srow"><span>FILLED CELLS</span><b id="s-cells">0 / 64</b></div>
+          <div class="srow"><span>COVERAGE</span><b id="s-cov">0%</b></div>
+          <div class="srow"><span>TILE SIZE</span><b>32 × 32 MM</b></div>
+          <div class="srow"><span>EST. MATERIAL</span><b id="s-mat">0.0 G</b></div>
+          <div class="srow"><span>EST. PRINT TIME</span><b id="s-time">6 MIN</b></div>
+        </div>
+        <div class="stamprow">
+          <label class="mono" for="bname" style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Name the design</label>
+          <input id="bname" maxlength="12" placeholder="e.g. STAR-7" autocomplete="off">
+          <div class="stampbtns">
+            <button class="stamp" id="stamp-go">Stamp to manifest</button>
+            <button class="stamp" id="stamp-share">Share link</button>
+          </div>
+          <div id="forge-msg" role="status"></div>
+        </div>
+      </div>
+    </div>
+    <div class="sechead" style="margin-top:34px;margin-bottom:16px"><span class="no">ORD</span><h2 style="font-size:20px">Order manifest</h2></div>
+    <div id="manifest"><div class="mrow mono" style="justify-content:center;color:var(--dim)">NO BLUEPRINTS STAMPED YET.</div></div>
+  </div>
+</section>
+
+<section id="list">
+  <div class="wrap">
+    <div class="sechead"><span class="no">03</span><h2>Print run 01</h2></div>
+    <div class="wl">
+      <p style="font-size:16px;line-height:1.5">The first print run is limited to 50 tiles. Join the waiting list and we will reach out when your kid's turn comes up.</p>
+      <div id="wl-form">
+        <label for="wname">Parent name</label>
+        <input id="wname" maxlength="40" autocomplete="name" style="margin-bottom:12px">
+        <label for="wcontact">Email or phone</label>
+        <input id="wcontact" maxlength="60" autocomplete="off" style="margin-bottom:12px">
+        <button id="wl-go">Request a slot</button>
+        <div id="wl-msg" style="margin-top:10px"></div>
+      </div>
+      <p class="wl-note">No payment now, no commitment. This proof-of-concept stores requests locally on your phone. No payment details are ever asked for, and children's designs are not uploaded anywhere.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>PIXELFORGE /// PROOF OF CONCEPT v0.1.0 /// BUILD 2026-10-14</span>
+    <span>Kids design. Machines build. Parents smile.</span>
+  </div>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+  var FILS = [
+    { id: 'lime', hex: '#C6F211', name: 'Reactor Lime' },
+    { id: 'cyan', hex: '#37D5E8', name: 'Signal Cyan' },
+    { id: 'mag', hex: '#FF3EA5', name: 'Thruster Magenta' },
+    { id: 'orange', hex: '#FF8A3D', name: 'Nozzle Orange' },
+    { id: 'ink', hex: '#101014', name: 'Stealth Black' },
+    { id: 'white', hex: '#FFFFFF', name: 'Lab White' }
+  ];
+  var PRESETS = {
+    rocket: { name:'ROCKET', cells:[ '. . . # # . . .','. . . # # . . .','. . # # # # . .','. # # # # # # .','# # # # # # # #','# . # . . # . .','# . # . . # . .','. . # # . # # .' ].join('').replace(/ /g,'') },
+    heart:  { name:'HEART',  cells:[ '. # # . . # # .','# # # # # # # #','# # # # # # # #','# # # # # # # #','. # # # # # # .','. . # # # # . .','. . . # # . . .','. . . . . . . .' ].join('').replace(/ /g,'') },
+    ghost:  { name:'GHOST',  cells:[ '. . # # # # . .','. # # # # # # .','# # # # # # # #','# # # # # # # #','# # # # # # # #','# # # # # # # #','# . # # # # . .','# # . # . # # .' ].join('').replace(/ /g,'') },
+    cat:    { name:'CAT',    cells:[ '# . . . . . . #','# # . . . . # #','# # # # # # # #','# . # # # # . #','# # # # # # # #','. # . # # . # .','. # . . . . # .','. . # # # # . .' ].join('').replace(/ /g,'') }
+  };
+  var cells = new Array(64).fill(0);
+  var fil = 0, tool = 'draw';
+  var manifest = [];
+  try { manifest = JSON.parse(localStorage.getItem('pf_manifest_v1') || '[]'); } catch (e) { manifest = []; }
+
+  var gridEl = document.getElementById('grid');
+  var btns = [];
+  for (var i = 0; i < 64; i++) {
+    var b = document.createElement('button');
+    b.setAttribute('aria-label', 'Pixel cell row ' + (Math.floor(i/8)+1) + ' column ' + (i%8+1));
+    b.dataset.i = i;
+    gridEl.appendChild(b); btns.push(b);
+  }
+
+  function serial() {
+    var h = 0;
+    for (var i = 0; i < 64; i++) { h = ((h * 31) + cells[i]) & 0xFFFF; }
+    var s = ('000' + h.toString(16).toUpperCase()).slice(-4);
+    return 'PX-' + s;
+  }
+  function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+  function nFilled() { var n = 0; for (var i = 0; i < 64; i++) if (cells[i]) n++; return n; }
+  function render() {
+    var hex = FILS[fil].hex;
+    for (var i = 0; i < 64; i++) {
+      btns[i].classList.toggle('on', !!cells[i]);
+      btns[i].classList.toggle('er', tool === 'erase' && !!cells[i]);
+      btns[i].style.setProperty('--fill', hex);
+    }
+    var n = nFilled();
+    document.getElementById('serial').textContent = 'SERIAL: ' + serial();
+    document.getElementById('s-cells').textContent = n + ' / 64';
+    document.getElementById('s-cov').textContent = Math.round(n / 64 * 100) + '%';
+    document.getElementById('s-mat').textContent = (n * 0.14).toFixed(1) + ' G';
+    document.getElementById('s-time').textContent = (6 + Math.round(n * 0.45)) + ' MIN';
+  }
+  function persist() { try { localStorage.setItem('pf_manifest_v1', JSON.stringify(manifest)); } catch (e) {} }
+
+  var drawing = false;
+  function applyCell(i) { if (tool === 'draw') cells[i] = 1; else cells[i] = 0; }
+  gridEl.addEventListener('pointerdown', function(e) {
+    var t = e.target.closest('button'); if (!t) return;
+    e.preventDefault(); drawing = true; applyCell(+t.dataset.i); render();
+  });
+  gridEl.addEventListener('pointermove', function(e) {
+    if (!drawing) return;
+    var t = document.elementFromPoint(e.clientX, e.clientY);
+    if (t && t.closest && t.closest('button') && t.closest('#grid')) { applyCell(+t.closest('button').dataset.i); render(); }
+  });
+  window.addEventListener('pointerup', function() { drawing = false; });
+
+  document.getElementById('tool-draw').addEventListener('click', function() {
+    tool = 'draw';
+    this.classList.add('sel'); document.getElementById('tool-erase').classList.remove('sel'); render();
+  });
+  document.getElementById('tool-erase').addEventListener('click', function() {
+    tool = 'erase';
+    this.classList.add('sel'); document.getElementById('tool-draw').classList.remove('sel'); render();
+  });
+  document.getElementById('btn-clear').addEventListener('click', function() {
+    cells = new Array(64).fill(0); render();
+  });
+  document.querySelectorAll('.preset').forEach(function(p) {
+    p.addEventListener('click', function() {
+      var pre = PRESETS[p.getAttribute('data-p')];
+      for (var i = 0; i < 64; i++) cells[i] = pre.cells[i] === '#' ? 1 : 0;
+      render();
+    });
+  });
+  var filEl = document.getElementById('fil');
+  FILS.forEach(function(f, idx) {
+    var s = document.createElement('button');
+    s.className = 'sw' + (idx === 0 ? ' sel' : '');
+    s.style.background = f.hex;
+    s.setAttribute('aria-label', 'Filament: ' + f.name);
+    s.addEventListener('click', function() {
+      fil = idx;
+      filEl.querySelectorAll('.sw').forEach(function(x) { x.classList.remove('sel'); });
+      s.classList.add('sel'); render();
+    });
+    filEl.appendChild(s);
+  });
+
+  function renderManifest() {
+    var m = document.getElementById('manifest');
+    if (!manifest.length) { m.innerHTML = '<div class="mrow mono" style="justify-content:center;color:var(--dim)">NO BLUEPRINTS STAMPED YET.</div>'; return; }
+    m.innerHTML = manifest.map(function(it) {
+      var mini = '';
+      for (var i = 0; i < 64; i += 4) {
+        var on = false;
+        for (var j = 0; j < 4; j++) if (it.cells[i+j]) on = true;
+        mini += '<i' + (on ? ' class="on"' : '') + '></i>';
+      }
+      return '<div class="mrow"><div><b>' + esc(it.name) + '</b><br><span class="mono">' + esc(it.serial) + ' // ' + esc(FILS[it.fil].name) + '</span></div><div class="px">' + mini + '</div></div>';
+    }).join('');
+  }
+
+  function shareUrl() {
+    var nm = (document.getElementById('bname').value.trim() || '').replace(/[^A-Za-z0-9 _-]/g, '');
+    var cs = cells.join('');
+    return location.origin + location.pathname + '#b=' + fil + '-' + cs + (nm ? '-' + encodeURIComponent(nm).replace(/%20/g, '_') : '');
+  }
+  document.getElementById('stamp-go').addEventListener('click', function() {
+    if (!nFilled()) { document.getElementById('forge-msg').textContent = 'DRAW SOMETHING FIRST.'; return; }
+    var nm = (document.getElementById('bname').value.trim() || 'UNTITLED').slice(0, 12);
+    manifest.unshift({ name: nm.toUpperCase(), serial: serial(), fil: fil, cells: cells.slice() });
+    persist(); renderManifest();
+    document.getElementById('forge-msg').textContent = 'STAMPED. ' + nm.toUpperCase() + ' IS ON THE MANIFEST.';
+  });
+  document.getElementById('stamp-share').addEventListener('click', function() {
+    var url = shareUrl();
+    var ta = document.createElement('textarea');
+    ta.value = url; ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;opacity:0;top:0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); document.getElementById('forge-msg').textContent = 'LINK COPIED. ANYONE OPENING IT SEES THIS EXACT BLUEPRINT.'; } catch (e) {}
+    document.body.removeChild(ta);
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).catch(function() {});
+  });
+
+  document.getElementById('wl-go').addEventListener('click', function() {
+    var nm = document.getElementById('wname').value.trim();
+    var ct = document.getElementById('wcontact').value.trim();
+    var msg = document.getElementById('wl-msg');
+    if (!nm || !ct) { msg.className = 'err'; msg.textContent = 'BOTH FIELDS REQUIRED.'; return; }
+    msg.className = ''; msg.textContent = 'REQUEST LOGGED. YOU ARE IN THE QUEUE FOR PRINT RUN 01.';
+  });
+
+  function fromHash() {
+    var h = location.hash;
+    if (h.indexOf('#b=') !== 0) return false;
+    var parts = h.slice(3).split('-');
+    if (parts.length < 2) return false;
+    var f = parseInt(parts[0], 10);
+    var cs = parts[1];
+    if (isNaN(f) || f < 0 || f >= FILS.length || !/^[01]{64}$/.test(cs)) return false;
+    var nm = decodeURIComponent(parts.slice(2).join('-').replace(/_/g, ' ')).replace(/[^A-Za-z0-9 -]/g, '').trim();
+    fil = f;
+    for (var i = 0; i < 64; i++) cells[i] = cs[i] === '1' ? 1 : 0;
+    if (nm) document.getElementById('bname').value = nm.slice(0, 12);
+    render();
+    setTimeout(function() { document.getElementById('forge').scrollIntoView(); }, 300);
+    return true;
+  }
+
+  render(); renderManifest();
+  fromHash();
+})();
+</script>
+</body>
+</html>
