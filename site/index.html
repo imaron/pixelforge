@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="app-version" content="0.1.0">
+<meta name="app-version" content="0.2.0">
 <title>PixelForge — the small engineers' print shop</title>
 <meta name="description" content="Kids design pixel prototypes. We 3D print them for real. Join Print Run 01.">
 <meta property="og:title" content="PixelForge — the small engineers' print shop">
@@ -214,17 +214,18 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
         <input id="wname" maxlength="40" autocomplete="name" style="margin-bottom:12px">
         <label for="wcontact">Email or phone</label>
         <input id="wcontact" maxlength="60" autocomplete="off" style="margin-bottom:12px">
+        <input id="w-hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;height:0;width:0;opacity:0">
         <button id="wl-go">Request a slot</button>
         <div id="wl-msg" style="margin-top:10px"></div>
       </div>
-      <p class="wl-note">No payment now, no commitment. This proof-of-concept stores requests locally on your phone. No payment details are ever asked for, and children's designs are not uploaded anywhere.</p>
+      <p class="wl-note">No payment now, no commitment. This stores your request with the PixelForge team only. No payment details are ever asked for, and children's designs are not uploaded anywhere.</p>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <span>PIXELFORGE /// PROOF OF CONCEPT v0.1.0 /// BUILD 2026-10-14</span>
+    <span>PIXELFORGE /// PROOF OF CONCEPT v0.2.0 /// BUILD 2026-10-14 // TELEMETRY ON</span>
     <span>Kids design. Machines build. Parents smile.</span>
   </div>
 </footer>
@@ -232,6 +233,10 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
 <script>
 (function() {
   'use strict';
+  var TRACK_URL = 'https://base44.app/api/apps/69b1a4d80f845e110c847722/functions/trackEvent';
+  var WL_URL = 'https://base44.app/api/apps/69b1a4d80f845e110c847722/functions/submitPfWaitlist';
+  function track(ev, label) { try { fetch(TRACK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: ev, label: label || '' }), keepalive: true }).catch(function() {}); } catch (e) {} }
+  track('pf_visit', '');
   var FILS = [
     { id: 'lime', hex: '#C6F211', name: 'Reactor Lime' },
     { id: 'cyan', hex: '#37D5E8', name: 'Signal Cyan' },
@@ -284,8 +289,8 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
   }
   function persist() { try { localStorage.setItem('pf_manifest_v1', JSON.stringify(manifest)); } catch (e) {} }
 
-  var drawing = false;
-  function applyCell(i) { if (tool === 'draw') cells[i] = 1; else cells[i] = 0; }
+  var drawing = false, forged = false;
+  function applyCell(i) { if (!forged) { forged = true; track('pf_forge_start', ''); } if (tool === 'draw') cells[i] = 1; else cells[i] = 0; }
   gridEl.addEventListener('pointerdown', function(e) {
     var t = e.target.closest('button'); if (!t) return;
     e.preventDefault(); drawing = true; applyCell(+t.dataset.i); render();
@@ -310,6 +315,7 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
   });
   document.querySelectorAll('.preset').forEach(function(p) {
     p.addEventListener('click', function() {
+      track('pf_template', p.getAttribute('data-p').toUpperCase());
       var pre = PRESETS[p.getAttribute('data-p')];
       for (var i = 0; i < 64; i++) cells[i] = pre.cells[i] === '#' ? 1 : 0;
       render();
@@ -351,12 +357,14 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
   document.getElementById('stamp-go').addEventListener('click', function() {
     if (!nFilled()) { document.getElementById('forge-msg').textContent = 'DRAW SOMETHING FIRST.'; return; }
     var nm = (document.getElementById('bname').value.trim() || 'UNTITLED').slice(0, 12);
+    track('pf_stamp', nm.toUpperCase() + ' / ' + FILS[fil].name + ' / ' + serial());
     manifest.unshift({ name: nm.toUpperCase(), serial: serial(), fil: fil, cells: cells.slice() });
     persist(); renderManifest();
     document.getElementById('forge-msg').textContent = 'STAMPED. ' + nm.toUpperCase() + ' IS ON THE MANIFEST.';
   });
   document.getElementById('stamp-share').addEventListener('click', function() {
     var url = shareUrl();
+    track('pf_share', '');
     var ta = document.createElement('textarea');
     ta.value = url; ta.setAttribute('readonly', '');
     ta.style.cssText = 'position:fixed;opacity:0;top:0';
@@ -369,9 +377,18 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
   document.getElementById('wl-go').addEventListener('click', function() {
     var nm = document.getElementById('wname').value.trim();
     var ct = document.getElementById('wcontact').value.trim();
+    var hp = document.getElementById('w-hp').value.trim();
     var msg = document.getElementById('wl-msg');
     if (!nm || !ct) { msg.className = 'err'; msg.textContent = 'BOTH FIELDS REQUIRED.'; return; }
-    msg.className = ''; msg.textContent = 'REQUEST LOGGED. YOU ARE IN THE QUEUE FOR PRINT RUN 01.';
+    msg.className = ''; msg.textContent = 'TRANSMITTING...';
+    track('pf_signup', '');
+    fetch(WL_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: nm, contact: ct, hp: hp, version: document.querySelector('meta[name="app-version"]').content, ua: navigator.userAgent.slice(0, 400), stamped: manifest.length }) })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d && d.ok) { msg.textContent = 'REQUEST LOGGED. YOU ARE IN THE QUEUE FOR PRINT RUN 01.'; }
+        else { msg.className = 'err'; msg.textContent = 'TRANSMISSION FAILED. TRY AGAIN.'; }
+      })
+      .catch(function() { msg.className = 'err'; msg.textContent = 'TRANSMISSION FAILED. TRY AGAIN.'; });
   });
 
   function fromHash() {
@@ -387,6 +404,7 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
     for (var i = 0; i < 64; i++) cells[i] = cs[i] === '1' ? 1 : 0;
     if (nm) document.getElementById('bname').value = nm.slice(0, 12);
     render();
+    track('pf_share_open', decodeURIComponent(location.hash.slice(3)).split('-').slice(2).join(' ').replace(/_/g, ' ').slice(0, 40));
     setTimeout(function() { document.getElementById('forge').scrollIntoView(); }, 300);
     return true;
   }
