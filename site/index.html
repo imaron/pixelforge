@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="app-version" content="0.2.0">
+<meta name="app-version" content="0.3.0">
 <title>PixelForge — the small engineers' print shop</title>
-<meta name="description" content="Kids design pixel prototypes. We 3D print them for real. Join Print Run 01.">
+<meta name="description" content="Kids design pixel prototypes on a 16x16 build grid. We export real 3D model files and 3D print them. Join Print Run 01.">
 <meta property="og:title" content="PixelForge — the small engineers' print shop">
 <meta property="og:description" content="Kids draw pixel prototypes on a real build grid. We 3D print them for real. Join Print Run 01.">
 <meta property="og:image" content="https://media.base44.com/images/public/69b1a4d80f845e110c847722/a11c269e2_generated_image.png">
@@ -63,11 +63,13 @@ section { border-bottom:2px solid var(--line); padding:44px 0; }
 /* forge */
 #forge .wrap { max-width:720px; }
 .forge-grid { display:flex; flex-direction:column; gap:16px; }
-.canvasbox { border:2px solid var(--line); background:#fff; padding:12px; }
-#grid { display:grid; grid-template-columns:repeat(8,1fr); gap:4px; touch-action:none; }
-#grid button { height:40px; min-height:40px; border:1px solid rgba(16,16,20,.25); background:#fff; padding:0; }
+.canvasbox { border:2px solid var(--line); background:#fff; padding:10px; }
+#grid { display:grid; grid-template-columns:repeat(16,1fr); gap:2px; touch-action:none; }
+#grid button { height:18px; min-height:18px; border:1px solid rgba(16,16,20,.25); background:#fff; padding:0; }
 #grid button.on { background:var(--fill,#C6F211); border-color:var(--ink); }
 #grid button.er { opacity:0; }
+#sim { width:100%; height:280px; display:none; border:1px solid rgba(16,16,20,.2); background:#fff; }
+.gridcap { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--dim); margin-top:8px; letter-spacing:.05em; }
 .toolrow { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
 .tbtn { font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; border:2px solid var(--ink); background:#fff; color:var(--ink); padding:12px 16px; min-height:44px; }
 .tbtn.sel { background:var(--ink); color:var(--lime); }
@@ -80,6 +82,13 @@ section { border-bottom:2px solid var(--line); padding:44px 0; }
 #spec .srow:last-child { border-bottom:none; }
 #spec .srow b { color:var(--lime); }
 #spec .serial { display:block; text-align:center; padding:12px; border-bottom:1px solid rgba(255,255,255,.15); letter-spacing:.15em; }
+/* export */
+.exportrow { display:flex; flex-direction:column; gap:10px; }
+.ebtn { font-family:'IBM Plex Mono',monospace; font-size:15px; font-weight:600; text-transform:uppercase; padding:14px 18px; min-height:52px; border:2px solid var(--ink); }
+#exp-stl { background:var(--lime); color:var(--ink); box-shadow:4px 4px 0 var(--ink); }
+#exp-stl:active { transform:translate(2px,2px); box-shadow:2px 2px 0 var(--ink); }
+#exp-3mf { background:#fff; color:var(--ink); }
+.exportrow .expnote { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--dim); line-height:1.5; letter-spacing:.03em; }
 /* stamp area */
 .stamprow { display:flex; flex-direction:column; gap:10px; }
 #bname { height:52px; border:2px solid var(--ink); background:#fff; padding:0 14px; font-size:16px; width:100%; }
@@ -114,7 +123,7 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
   .step { flex:1; border-top:2px solid var(--line); }
   .step + .step { border-left:none; }
   .forge-grid { display:grid; grid-template-columns:1fr 260px; }
-  #grid button { height:48px; }
+  #grid button { height:24px; min-height:24px; }
 }
 </style>
 </head>
@@ -131,7 +140,7 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
   </div>
 </header>
 
-<div id="ticker"><span>PRINT RUN 01 NOW FORMING /// 64-VOXEL CANVAS /// 32 × 32 MM TILE /// SINGLE-FILAMENT PRINT /// DESIGNED BY KIDS, PRINTED FOR REAL /// PRINT RUN 01 NOW FORMING /// 64-VOXEL CANVAS /// 32 × 32 MM TILE /// SINGLE-FILAMENT PRINT /// DESIGNED BY KIDS, PRINTED FOR REAL /// </span></div>
+<div id="ticker"><span>PRINT RUN 01 NOW FORMING /// 256-VOXEL CANVAS /// 2 MM VOXELS ON A 32 × 32 MM TILE /// EXPORTS REAL 3MF + STL /// SLICED ON A BAMBU LAB A1 /// DESIGNED BY KIDS, PRINTED FOR REAL /// PRINT RUN 01 NOW FORMING /// 256-VOXEL CANVAS /// 2 MM VOXELS ON A 32 × 32 MM TILE /// EXPORTS REAL 3MF + STL /// SLICED ON A BAMBU LAB A1 /// DESIGNED BY KIDS, PRINTED FOR REAL /// </span></div>
 
 <section id="hero">
   <div class="wrap">
@@ -139,7 +148,7 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
     <h1>Your kid is an<br><span class="ol">engineer.</span></h1>
     <p class="sub">No catalog. No picking from a shelf. At PixelForge, kids draw a pixel prototype on a real build grid, and we 3D print the exact thing they made. One color. One tile. Their design, in their hands.</p>
     <a class="cta" href="#forge">Open the forge &rarr;</a>
-    <div class="herometa mono">UNIT: TX-01 // STATUS: CALIBRATED // OPENER: OCT 2026</div>
+    <div class="herometa mono">UNIT: TX-01 /// STATUS: CALIBRATED /// OPENER: OCT 2026</div>
   </div>
 </section>
 
@@ -147,8 +156,8 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
   <div class="wrap">
     <div class="sechead"><span class="no">01</span><h2>How it works</h2></div>
     <div class="steps">
-      <div class="step"><h3><i>Draw</i>Design on the build grid</h3><p>An 8 × 8 canvas, one finger, one color. Kids tap out a picture: a rocket, a ghost, their initials, anything. <b>8 minutes of focus, not 8 seconds of scrolling.</b></p></div>
-      <div class="step"><h3><i>Print</i>We print the exact pixels</h3><p>Every filled cell becomes a raised voxel on a 32 × 32 mm tile, printed in solid single-filament plastic. <b>No smoothing, no editing. What they drew is what they get.</b></p></div>
+      <div class="step"><h3><i>Draw</i>Design on the build grid</h3><p>A 16 × 16 canvas, one finger, one color. Every cell is a real 2 mm voxel, so the drawing detail matches what the machine can actually print. <b>8 minutes of focus, not 8 seconds of scrolling.</b></p></div>
+      <div class="step"><h3><i>Print</i>We slice it on a Bambu Lab A1</h3><p>The blueprint exports as a real 3D model file (3MF, the Bambu Studio format). We slice it and every filled voxel prints raised on a 32 × 32 mm tile. <b>No smoothing, no editing. What they drew is what they get.</b></p></div>
       <div class="step"><h3><i>Ship</i>It arrives with their name on it</h3><p>The tile ships with a spec sheet carrying their design's serial number. <b>A real object they engineered, not a toy they were sold.</b></p></div>
     </div>
   </div>
@@ -164,8 +173,14 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
           <button class="tbtn" id="tool-erase">Erase</button>
           <button class="tbtn" id="btn-clear">Clear</button>
         </div>
+        <div class="toolrow">
+          <button class="tbtn sel" id="view-grid">Grid view</button>
+          <button class="tbtn" id="view-sim">Print preview</button>
+        </div>
         <div class="canvasbox">
-          <div id="grid" aria-label="8 by 8 pixel design canvas"></div>
+          <div id="grid" aria-label="16 by 16 pixel design canvas"></div>
+          <canvas id="sim" width="640" height="560" aria-label="Isometric preview of the printed tile"></canvas>
+          <div class="gridcap">16 × 16 GRID · 2 MM VOXELS · MATCHED TO BAMBU LAB A1 BED PRECISION</div>
         </div>
         <div class="toolrow">
           <span class="mono" style="font-size:13px;font-weight:600;align-self:center">TEMPLATES:</span>
@@ -182,11 +197,17 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
       <div style="display:flex;flex-direction:column;gap:16px">
         <div id="spec" aria-live="polite">
           <span class="serial" id="serial">SERIAL: PX-0000</span>
-          <div class="srow"><span>FILLED CELLS</span><b id="s-cells">0 / 64</b></div>
+          <div class="srow"><span>GRID</span><b>16 × 16</b></div>
+          <div class="srow"><span>FILLED VOXELS</span><b id="s-cells">0 / 256</b></div>
           <div class="srow"><span>COVERAGE</span><b id="s-cov">0%</b></div>
           <div class="srow"><span>TILE SIZE</span><b>32 × 32 MM</b></div>
-          <div class="srow"><span>EST. MATERIAL</span><b id="s-mat">0.0 G</b></div>
-          <div class="srow"><span>EST. PRINT TIME</span><b id="s-time">6 MIN</b></div>
+          <div class="srow"><span>EST. MATERIAL</span><b id="s-mat">2.5 G</b></div>
+          <div class="srow"><span>EST. PRINT TIME</span><b id="s-time">16 MIN</b></div>
+        </div>
+        <div class="exportrow">
+          <button class="ebtn" id="exp-stl">Export .STL model</button>
+          <button class="ebtn" id="exp-3mf">Export .3MF (Bambu)</button>
+          <div class="expnote">REAL 3D MODEL FILES. OPEN IN BAMBU STUDIO, SLICE FOR THE A1, PRINT. THE PRINT SHOP CAN DO THIS STEP FOR YOU AT CHECKOUT.</div>
         </div>
         <div class="stamprow">
           <label class="mono" for="bname" style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Name the design</label>
@@ -218,14 +239,14 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
         <button id="wl-go">Request a slot</button>
         <div id="wl-msg" style="margin-top:10px"></div>
       </div>
-      <p class="wl-note">No payment now, no commitment. This stores your request with the PixelForge team only. No payment details are ever asked for, and children's designs are not uploaded anywhere.</p>
+      <p class="wl-note">This stores your request with the PixelForge team only. No payment details are ever asked for, and children's designs are not uploaded anywhere.</p>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <span>PIXELFORGE /// PROOF OF CONCEPT v0.2.0 /// BUILD 2026-10-14 // TELEMETRY ON</span>
+    <span>PIXELFORGE /// PROOF OF CONCEPT v0.3.0 /// BUILD 2026-10-14 // TELEMETRY ON</span>
     <span>Kids design. Machines build. Parents smile.</span>
   </div>
 </footer>
@@ -237,6 +258,8 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
   var WL_URL = 'https://base44.app/api/apps/69b1a4d80f845e110c847722/functions/submitPfWaitlist';
   function track(ev, label) { try { fetch(TRACK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: ev, label: label || '' }), keepalive: true }).catch(function() {}); } catch (e) {} }
   track('pf_visit', '');
+
+  var N = 256, CELL_MM = 2, TILE_MM = 32, BASE_H = 2, VOX_H = 2;
   var FILS = [
     { id: 'lime', hex: '#C6F211', name: 'Reactor Lime' },
     { id: 'cyan', hex: '#37D5E8', name: 'Signal Cyan' },
@@ -245,49 +268,180 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
     { id: 'ink', hex: '#101014', name: 'Stealth Black' },
     { id: 'white', hex: '#FFFFFF', name: 'Lab White' }
   ];
+  function P(rows) { var out = []; for (var r = 0; r < 16; r++) { for (var c = 0; c < 16; c++) { out.push(rows[r].charAt(c) === '#' ? 1 : 0); } } return out; }
   var PRESETS = {
-    rocket: { name:'ROCKET', cells:[ '. . . # # . . .','. . . # # . . .','. . # # # # . .','. # # # # # # .','# # # # # # # #','# . # . . # . .','# . # . . # . .','. . # # . # # .' ].join('').replace(/ /g,'') },
-    heart:  { name:'HEART',  cells:[ '. # # . . # # .','# # # # # # # #','# # # # # # # #','# # # # # # # #','. # # # # # # .','. . # # # # . .','. . . # # . . .','. . . . . . . .' ].join('').replace(/ /g,'') },
-    ghost:  { name:'GHOST',  cells:[ '. . # # # # . .','. # # # # # # .','# # # # # # # #','# # # # # # # #','# # # # # # # #','# # # # # # # #','# . # # # # . .','# # . # . # # .' ].join('').replace(/ /g,'') },
-    cat:    { name:'CAT',    cells:[ '# . . . . . . #','# # . . . . # #','# # # # # # # #','# . # # # # . #','# # # # # # # #','. # . # # . # .','. # . . . . # .','. . # # # # . .' ].join('').replace(/ /g,'') }
+    rocket: { name: 'ROCKET', cells: P([
+      '.......##.......',
+      '......####......',
+      '......####......',
+      '.....######.....',
+      '.....######.....',
+      '....########....',
+      '....########....',
+      '....##.##.##....',
+      '...##########...',
+      '...##########...',
+      '...##......##...',
+      '...##......##...',
+      '..##..####..##..',
+      '.###..####..###.',
+      '####..####..####',
+      '......####......'
+    ]) },
+    heart: { name: 'HEART', cells: P([
+      '................',
+      '...###....###...',
+      '..####....####..',
+      '.######..######.',
+      '.######..######.',
+      '################',
+      '################',
+      '.##############.',
+      '..############..',
+      '...##########...',
+      '....########....',
+      '.....######.....',
+      '......####......',
+      '.......##.......',
+      '................',
+      '................'
+    ]) },
+    ghost: { name: 'GHOST', cells: P([
+      '......####......',
+      '....########....',
+      '...##########...',
+      '..############..',
+      '..############..',
+      '..##..####..##..',
+      '..##..####..##..',
+      '..############..',
+      '..############..',
+      '..############..',
+      '..############..',
+      '..############..',
+      '..############..',
+      '..###.####.###..',
+      '................',
+      '................'
+    ]) },
+    cat: { name: 'CAT', cells: P([
+      '.##..........##.',
+      '.###........###.',
+      '.##############.',
+      '################',
+      '################',
+      '####..####..####',
+      '####..####..####',
+      '################',
+      '#######..#######',
+      '#######..#######',
+      '################',
+      '.##############.',
+      '..############..',
+      '...##########...',
+      '................',
+      '................'
+    ]) }
   };
-  var cells = new Array(64).fill(0);
-  var fil = 0, tool = 'draw';
+  var cells = new Array(N).fill(0);
+  var fil = 0, tool = 'draw', view = 'grid';
   var manifest = [];
-  try { manifest = JSON.parse(localStorage.getItem('pf_manifest_v1') || '[]'); } catch (e) { manifest = []; }
+  try { manifest = JSON.parse(localStorage.getItem('pf_manifest_v2') || '[]'); } catch (e) { manifest = []; }
 
   var gridEl = document.getElementById('grid');
+  var simEl = document.getElementById('sim');
   var btns = [];
-  for (var i = 0; i < 64; i++) {
+  for (var i = 0; i < N; i++) {
     var b = document.createElement('button');
-    b.setAttribute('aria-label', 'Pixel cell row ' + (Math.floor(i/8)+1) + ' column ' + (i%8+1));
+    b.setAttribute('aria-label', 'Voxel cell row ' + (Math.floor(i / 16) + 1) + ' column ' + (i % 16 + 1));
     b.dataset.i = i;
     gridEl.appendChild(b); btns.push(b);
   }
 
   function serial() {
     var h = 0;
-    for (var i = 0; i < 64; i++) { h = ((h * 31) + cells[i]) & 0xFFFF; }
-    var s = ('000' + h.toString(16).toUpperCase()).slice(-4);
-    return 'PX-' + s;
+    for (var i = 0; i < N; i++) { h = ((h * 31) + cells[i]) & 0xFFFF; }
+    return 'PX-' + ('000' + h.toString(16).toUpperCase()).slice(-4);
   }
   function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
-  function nFilled() { var n = 0; for (var i = 0; i < 64; i++) if (cells[i]) n++; return n; }
+  function nFilled() { var n = 0; for (var i = 0; i < N; i++) if (cells[i]) n++; return n; }
+
+  /* ---- isometric print preview (matches how the tile prints) ---- */
+  function isoXY(x, y, z) { return [ (x - y), (x + y) * 0.5 - z ]; }
+  function drawSim() {
+    var c = simEl.getContext('2d');
+    var W = simEl.width, H = simEl.height;
+    c.clearRect(0, 0, W, H);
+    var s = 14, zr = 7; /* raised voxel pixel depth */
+    var ox = W / 2, oy = 56;
+    var hex = FILS[fil].hex;
+    function shade(h, f) {
+      /* f<0 darken, f>0 lighten */
+      var r = parseInt(h.slice(1, 3), 16), g = parseInt(h.slice(3, 5), 16), b = parseInt(h.slice(5, 7), 16);
+      function ch(v) { v = Math.max(0, Math.min(255, Math.round(v * f))); return ('0' + v.toString(16)).slice(-2); }
+      return '#' + ch(r) + ch(g) + ch(b);
+    }
+    function poly(pts, fill, stroke) {
+      c.beginPath();
+      c.moveTo(ox + pts[0][0], oy + pts[0][1]);
+      for (var k = 1; k < pts.length; k++) c.lineTo(ox + pts[k][0], oy + pts[k][1]);
+      c.closePath(); c.fillStyle = fill; c.fill();
+      c.strokeStyle = stroke || '#101014'; c.lineWidth = 1.5; c.stroke();
+    }
+    function face4(pts, fill) {
+      c.beginPath();
+      c.moveTo(pts[0][0], pts[0][1]);
+      for (var k = 1; k < pts.length; k++) c.lineTo(pts[k][0], pts[k][1]);
+      c.closePath(); c.fillStyle = fill; c.fill(); c.strokeStyle = '#101014'; c.lineWidth = 1.5; c.stroke();
+    }
+    /* base plate: top face at z=0, extruded skirt 6px */
+    var B = TILE_MM * s / CELL_MM; /* plate edge in grid-units*  -- use mm scale: iso of mm coords */
+    /* work in mm * k where k = s/CELL_MM (px per mm) */
+    var k = s / CELL_MM;
+    var bd = 6; /* base skirt px */
+    var c00 = isoXY(0, 0, 0), c10 = isoXY(TILE_MM * k / 8, 0, 0);
+    var mm = TILE_MM; /* use mm directly with k scale */
+    function I(x, y, z) { return isoXY(x * k, y * k, z * k); }
+    var pA = I(0, 0, 0), pB = I(mm, 0, 0), pC = I(mm, mm, 0), pD = I(0, mm, 0);
+    /* top of plate */
+    face4([ [ox+pA[0],oy+pA[1]], [ox+pB[0],oy+pB[1]], [ox+pC[0],oy+pC[1]], [ox+pD[0],oy+pD[1]] ].map(function(q){return [q[0],q[1]];}), shade(hex, 0.82));
+    /* right skirt */
+    face4([ [ox+pB[0],oy+pB[1]], [ox+pC[0],oy+pC[1]], [ox+pC[0],oy+pC[1]+bd], [ox+pB[0],oy+pB[1]+bd] ], shade(hex, 0.55));
+    /* left skirt */
+    face4([ [ox+pC[0],oy+pC[1]], [ox+pD[0],oy+pD[1]], [ox+pD[0],oy+pD[1]+bd], [ox+pC[0],oy+pC[1]+bd] ], shade(hex, 0.42));
+    /* raised voxels, painter order back-to-front */
+    for (var gy = 0; gy < 16; gy++) {
+      for (var gx = 15; gx >= 0; gx--) {
+        if (!cells[gy * 16 + gx]) continue;
+        var x0 = gx * CELL_MM, y0 = gy * CELL_MM, x1 = x0 + CELL_MM, y1 = y0 + CELL_MM;
+        var t0 = I(x0, y0, BASE_H), t1 = I(x1, y0, BASE_H), t2 = I(x1, y1, BASE_H), t3 = I(x0, y1, BASE_H);
+        var rise = VOX_H * k;
+        /* right face (facing +x) */
+        face4([ [ox+t1[0],oy+t1[1]], [ox+t2[0],oy+t2[1]], [ox+t2[0],oy+t2[1]+rise], [ox+t1[0],oy+t1[1]+rise] ], shade(hex, 0.72));
+        /* front face (facing +y) */
+        face4([ [ox+t2[0],oy+t2[1]], [ox+t3[0],oy+t3[1]], [ox+t3[0],oy+t3[1]+rise], [ox+t2[0],oy+t2[1]+rise] ], shade(hex, 0.5));
+        /* top face */
+        face4([ [ox+t0[0],oy+t0[1]-rise], [ox+t1[0],oy+t1[1]-rise], [ox+t2[0],oy+t2[1]-rise], [ox+t3[0],oy+t3[1]-rise] ], hex);
+      }
+    }
+  }
+
   function render() {
     var hex = FILS[fil].hex;
-    for (var i = 0; i < 64; i++) {
+    for (var i = 0; i < N; i++) {
       btns[i].classList.toggle('on', !!cells[i]);
       btns[i].classList.toggle('er', tool === 'erase' && !!cells[i]);
       btns[i].style.setProperty('--fill', hex);
     }
     var n = nFilled();
     document.getElementById('serial').textContent = 'SERIAL: ' + serial();
-    document.getElementById('s-cells').textContent = n + ' / 64';
-    document.getElementById('s-cov').textContent = Math.round(n / 64 * 100) + '%';
-    document.getElementById('s-mat').textContent = (n * 0.14).toFixed(1) + ' G';
-    document.getElementById('s-time').textContent = (6 + Math.round(n * 0.45)) + ' MIN';
+    document.getElementById('s-cells').textContent = n + ' / 256';
+    document.getElementById('s-cov').textContent = Math.round(n / N * 100) + '%';
+    document.getElementById('s-mat').textContent = (2.5 + n * 0.01).toFixed(1) + ' G';
+    document.getElementById('s-time').textContent = (16 + Math.round(n * 0.06)) + ' MIN';
+    if (view === 'sim') drawSim();
   }
-  function persist() { try { localStorage.setItem('pf_manifest_v1', JSON.stringify(manifest)); } catch (e) {} }
+  function persist() { try { localStorage.setItem('pf_manifest_v2', JSON.stringify(manifest)); } catch (e) {} }
 
   var drawing = false, forged = false;
   function applyCell(i) { if (!forged) { forged = true; track('pf_forge_start', ''); } if (tool === 'draw') cells[i] = 1; else cells[i] = 0; }
@@ -311,13 +465,24 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
     this.classList.add('sel'); document.getElementById('tool-draw').classList.remove('sel'); render();
   });
   document.getElementById('btn-clear').addEventListener('click', function() {
-    cells = new Array(64).fill(0); render();
+    cells = new Array(N).fill(0); render();
   });
+  function setView(v) {
+    view = v;
+    gridEl.style.display = v === 'grid' ? 'grid' : 'none';
+    simEl.style.display = v === 'sim' ? 'block' : 'none';
+    document.getElementById('view-grid').classList.toggle('sel', v === 'grid');
+    document.getElementById('view-sim').classList.toggle('sel', v === 'sim');
+    render();
+  }
+  document.getElementById('view-grid').addEventListener('click', function() { setView('grid'); });
+  document.getElementById('view-sim').addEventListener('click', function() { setView('sim'); });
+
   document.querySelectorAll('.preset').forEach(function(p) {
     p.addEventListener('click', function() {
       track('pf_template', p.getAttribute('data-p').toUpperCase());
       var pre = PRESETS[p.getAttribute('data-p')];
-      for (var i = 0; i < 64; i++) cells[i] = pre.cells[i] === '#' ? 1 : 0;
+      for (var i = 0; i < N; i++) cells[i] = pre.cells[i];
       render();
     });
   });
@@ -340,22 +505,154 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
     if (!manifest.length) { m.innerHTML = '<div class="mrow mono" style="justify-content:center;color:var(--dim)">NO BLUEPRINTS STAMPED YET.</div>'; return; }
     m.innerHTML = manifest.map(function(it) {
       var mini = '';
-      for (var i = 0; i < 64; i += 4) {
+      for (var blk = 0; blk < 16; blk++) {
         var on = false;
-        for (var j = 0; j < 4; j++) if (it.cells[i+j]) on = true;
+        for (var j = 0; j < 16; j++) if (it.cells[blk * 16 + j]) on = true;
         mini += '<i' + (on ? ' class="on"' : '') + '></i>';
       }
       return '<div class="mrow"><div><b>' + esc(it.name) + '</b><br><span class="mono">' + esc(it.serial) + ' // ' + esc(FILS[it.fil].name) + '</span></div><div class="px">' + mini + '</div></div>';
     }).join('');
   }
 
+  /* ---- real 3D model generation: mesh, STL, 3MF ---- */
+  function buildTris() {
+    /* returns flat array of triangles: each tri = 9 floats (3 verts), z-up, mm */
+    var tris = [];
+    function tri(ax, ay, az, bx, by, bz, cx, cy, cz) {
+      tris.push(ax, ay, az, bx, by, bz, cx, cy, cz);
+    }
+    function box(x0, y0, z0, x1, y1, z1) {
+      var v = [
+        [x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0],
+        [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]
+      ];
+      function T(a, b, c) { tri(v[a][0], v[a][1], v[a][2], v[b][0], v[b][1], v[b][2], v[c][0], v[c][1], v[c][2]); }
+      T(4, 5, 6); T(4, 6, 7);   /* top */
+      T(0, 2, 1); T(0, 3, 2);   /* bottom */
+      T(0, 1, 5); T(0, 5, 4);   /* front y0 */
+      T(1, 2, 6); T(1, 6, 5);   /* right x1 */
+      T(2, 3, 7); T(2, 7, 6);   /* back y1 */
+      T(3, 0, 4); T(3, 4, 7);   /* left x0 */
+    }
+    box(0, 0, 0, TILE_MM, TILE_MM, BASE_H);
+    for (var gy = 0; gy < 16; gy++) {
+      for (var gx = 0; gx < 16; gx++) {
+        if (!cells[gy * 16 + gx]) continue;
+        box(gx * CELL_MM, gy * CELL_MM, BASE_H, gx * CELL_MM + CELL_MM, gy * CELL_MM + CELL_MM, BASE_H + VOX_H);
+      }
+    }
+    return tris;
+  }
+  function exportSTL() {
+    var tris = buildTris(), nt = tris.length / 9;
+    var buf = new ArrayBuffer(84 + nt * 50);
+    var dv = new DataView(buf);
+    var hdr = 'PixelForge blueprint ' + serial() + ' (c) small engineer';
+    for (var h = 0; h < 80; h++) dv.setUint8(h, h < hdr.length ? hdr.charCodeAt(h) : 0);
+    dv.setUint32(80, nt, true);
+    var off = 84;
+    for (var t = 0; t < tris.length; t += 9) {
+      var ax = tris[t], ay = tris[t + 1], az = tris[t + 2];
+      var bx = tris[t + 3], by = tris[t + 4], bz = tris[t + 5];
+      var cx = tris[t + 6], cy = tris[t + 7], cz = tris[t + 8];
+      var ux = bx - ax, uy = by - ay, uz = bz - az;
+      var vx = cx - ax, vy = cy - ay, vz = cz - az;
+      var nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+      var nl = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
+      dv.setFloat32(off, nx / nl, true); dv.setFloat32(off + 4, ny / nl, true); dv.setFloat32(off + 8, nz / nl, true); off += 12;
+      dv.setFloat32(off, ax, true); dv.setFloat32(off + 4, ay, true); dv.setFloat32(off + 8, az, true); off += 12;
+      dv.setFloat32(off, bx, true); dv.setFloat32(off + 4, by, true); dv.setFloat32(off + 8, bz, true); off += 12;
+      dv.setFloat32(off, cx, true); dv.setFloat32(off + 4, cy, true); dv.setFloat32(off + 8, cz, true); off += 12;
+      dv.setUint16(off, 0, true); off += 2;
+    }
+    dl(new Blob([buf], { type: 'model/stl' }), serial() + '.stl');
+  }
+  /* minimal 3MF: ZIP (stored) with Content_Types, rels, 3D model XML */
+  var CRCT = (function() { var t = [], c, n, k; for (n = 0; n < 256; n++) { c = n; for (k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  function crc32(u8) { var c = 0xFFFFFFFF; for (var i = 0; i < u8.length; i++) c = CRCT[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+  function zipStored(files) {
+    var enc = new TextEncoder();
+    var parts = [], central = [], offset = 0;
+    files.forEach(function(f) {
+      var nameB = enc.encode(f.name);
+      var data = f.data instanceof Uint8Array ? f.data : enc.encode(f.data);
+      var crc = crc32(data);
+      var lh = new DataView(new ArrayBuffer(30));
+      lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0, true); lh.setUint16(8, 0, true);
+      lh.setUint16(10, 0, true); lh.setUint16(12, 0x2100, true); /* date 2026-10-14-ish */
+      lh.setUint32(14, crc, true); lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true);
+      lh.setUint16(26, nameB.length, true); lh.setUint16(28, 0, true);
+      parts.push(new Uint8Array(lh.buffer), nameB, data);
+      var ch = new DataView(new ArrayBuffer(46));
+      ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true);
+      ch.setUint16(8, 0, true); ch.setUint16(10, 0, true); ch.setUint16(12, 0, true); ch.setUint16(14, 0x2100, true);
+      ch.setUint32(16, crc, true); ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true);
+      ch.setUint16(28, nameB.length, true);
+      ch.setUint32(42, offset, true);
+      central.push(new Uint8Array(ch.buffer), nameB);
+      offset += 30 + nameB.length + data.length;
+    });
+    var cdSize = central.reduce(function(s, p) { return s + p.length; }, 0);
+    var eocd = new DataView(new ArrayBuffer(22));
+    eocd.setUint32(0, 0x06054b50, true); eocd.setUint16(8, files.length, true); eocd.setUint16(10, files.length, true);
+    eocd.setUint32(12, cdSize, true); eocd.setUint32(16, offset, true);
+    return new Blob(parts.concat(central, [new Uint8Array(eocd.buffer)]), { type: 'application/octet-stream' });
+  }
+  function export3MF() {
+    var tris = buildTris(), nt = tris.length / 9;
+    var verts = '';
+    for (var t = 0; t < tris.length; t += 9) {
+      for (var v = 0; v < 3; v++) {
+        verts += '<vertex x="' + tris[t + v * 3] + '" y="' + tris[t + v * 3 + 1] + '" z="' + tris[t + v * 3 + 2] + '"/>';
+      }
+    }
+    var trisXml = '';
+    for (var ti = 0; ti < nt; ti++) {
+      var b = ti * 3;
+      trisXml += '<triangle v1="' + b + '" v2="' + (b + 1) + '" v3="' + (b + 2) + '"/>';
+    }
+    var model = '<?xml version="1.0" encoding="UTF-8"?>' +
+      '<model unit="millimeter" xml:lang="en-US" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02">' +
+      '<resources><object id="1" type="model"><mesh><vertices>' + verts + '</vertices><triangles>' + trisXml + '</triangles></mesh></object></resources>' +
+      '<build><item objectid="1"/></build></model>';
+    var ct = '<?xml version="1.0" encoding="UTF-8"?>' +
+      '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+      '<Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>';
+    var rels = '<?xml version="1.0" encoding="UTF-8"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rel0" Target="/3D/3dmodel.model" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>';
+    dl(zipStored([
+      { name: '[Content_Types].xml', data: ct },
+      { name: '_rels/.rels', data: rels },
+      { name: '3D/3dmodel.model', data: model }
+    ]), serial() + '.3mf');
+  }
+  function dl(blob, fname) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fname;
+    document.body.appendChild(a); a.click();
+    setTimeout(function() { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+  }
+  function requireFilled() { if (!nFilled()) { document.getElementById('forge-msg').textContent = 'DRAW SOMETHING FIRST.'; return false; } return true; }
+  document.getElementById('exp-stl').addEventListener('click', function() {
+    if (!requireFilled()) return;
+    track('pf_export', 'stl'); exportSTL();
+    document.getElementById('forge-msg').textContent = 'STL EXPORTED. OPEN IT IN ANY SLICER.';
+  });
+  document.getElementById('exp-3mf').addEventListener('click', function() {
+    if (!requireFilled()) return;
+    track('pf_export', '3mf'); export3MF();
+    document.getElementById('forge-msg').textContent = '3MF EXPORTED. OPEN IT IN BAMBU STUDIO AND SLICE FOR THE A1.';
+  });
+
   function shareUrl() {
     var nm = (document.getElementById('bname').value.trim() || '').replace(/[^A-Za-z0-9 _-]/g, '');
-    var cs = cells.join('');
-    return location.origin + location.pathname + '#b=' + fil + '-' + cs + (nm ? '-' + encodeURIComponent(nm).replace(/%20/g, '_') : '');
+    return location.origin + location.pathname + '#b=' + fil + '-' + cells.join('') + (nm ? '-' + encodeURIComponent(nm).replace(/%20/g, '_') : '');
   }
   document.getElementById('stamp-go').addEventListener('click', function() {
-    if (!nFilled()) { document.getElementById('forge-msg').textContent = 'DRAW SOMETHING FIRST.'; return; }
+    if (!requireFilled()) return;
     var nm = (document.getElementById('bname').value.trim() || 'UNTITLED').slice(0, 12);
     track('pf_stamp', nm.toUpperCase() + ' / ' + FILS[fil].name + ' / ' + serial());
     manifest.unshift({ name: nm.toUpperCase(), serial: serial(), fil: fil, cells: cells.slice() });
@@ -398,13 +695,12 @@ footer .wrap { display:flex; flex-direction:column; gap:4px; }
     if (parts.length < 2) return false;
     var f = parseInt(parts[0], 10);
     var cs = parts[1];
-    if (isNaN(f) || f < 0 || f >= FILS.length || !/^[01]{64}$/.test(cs)) return false;
+    if (isNaN(f) || f < 0 || f >= FILS.length || !/^[01]{256}$/.test(cs)) return false;
     var nm = decodeURIComponent(parts.slice(2).join('-').replace(/_/g, ' ')).replace(/[^A-Za-z0-9 -]/g, '').trim();
     fil = f;
-    for (var i = 0; i < 64; i++) cells[i] = cs[i] === '1' ? 1 : 0;
-    if (nm) document.getElementById('bname').value = nm.slice(0, 12);
+    for (var i = 0; i < N; i++) cells[i] = cs[i] === '1' ? 1 : 0;
     render();
-    track('pf_share_open', decodeURIComponent(location.hash.slice(3)).split('-').slice(2).join(' ').replace(/_/g, ' ').slice(0, 40));
+    track('pf_share_open', nm.slice(0, 40));
     setTimeout(function() { document.getElementById('forge').scrollIntoView(); }, 300);
     return true;
   }
